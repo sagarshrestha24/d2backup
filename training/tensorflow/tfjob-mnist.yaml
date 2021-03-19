@@ -1,0 +1,27 @@
+apiVersion: "kubeflow.org/v1"
+kind: "TFJob"
+metadata:
+  name: "tfjob-mnist"
+spec:
+  tfReplicaSpecs:
+    Worker:
+      replicas: 2
+      restartPolicy: Never
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          containers:
+            - name: tensorflow
+              # modify this property if you would like to use a custom image
+              image: mesosphere/kubeflow:mnist-tensorflow-2.2-1.0.1-0.5.0
+              args:
+                - --epochs
+                - "15"
+                - --steps
+                - "250"
+              # Comment out these resources when using only CPUs
+              resources:
+                limits:
+                  nvidia.com/gpu: 1
